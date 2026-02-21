@@ -1,1 +1,178 @@
-# EditRelease
+# Edit Release
+
+<div align="center">
+
+![.NET 6.0](https://img.shields.io/badge/Version-.NET%206.0-informational?style=flat&logo=dotnet)
+&nbsp;
+![Built With Docker](https://img.shields.io/badge/Built_With-Docker-informational?style=flat&logo=docker)
+&nbsp;
+[![CI Build](https://github.com/step-security/EditRelease/actions/workflows/ci-build.yml/badge.svg)](https://github.com/step-security/EditRelease/actions/workflows/ci-build.yml)
+&nbsp;
+
+
+</div>
+
+A GitHub Action for editing an existing release. Edit the Name, Draft status and Pre-release status of a release as well as adding text and the content of markdown files to the Body of a release.
+
+Edit Release is compatible with [StepSecurity Secure Workflows](https://github.com/step-security/secure-workflows) and uses a Docker image that is cryptographically signed using [Sigstore](https://www.sigstore.dev/).
+
+As a Docker based action Edit Release requires a Linux runner, see [Types of Action](https://docs.github.com/en/actions/creating-actions/about-custom-actions#types-of-actions).
+
+## Inputs
+
+#### `token`
+**Required**
+
+Authentication token, use either `GITHUB_TOKEN` or a Personal Access Token.
+
+#### `id`
+**Required**
+
+The id of the release to edit, e.g. `github.event.release.id`.
+
+#### `name`
+
+New text for the name of the release.
+
+#### `replacename`
+
+Set `true` to replace the release name, `false` to add to the release name (default).
+
+#### `draft`
+
+Set `true` to change the release to a draft, `false` to publish the release. Omit if you do not want to change the draft status of the release.
+
+#### `prerelease`
+
+Set `true` to identify the release as a pre-release, `false` to identify the release as a full release. Omit if you do not want to change the status of the release.
+
+#### `body`
+
+New text for the body of the release.
+
+#### `replacebody`
+
+Set `true` to replace the release body, `false` to add to the release body. (default)
+
+#### `files`
+
+A comma separated list of files whose content will be added after the release body text.
+
+#### `spacing`
+
+The number of blank lines required between each addition to the release body. (default = 1)
+
+## Outputs
+
+Edit Release has no outputs other than console messages and the edited release.
+
+## Usage
+
+```yaml
+name: Edit Release
+uses: step-security/EditRelease@v1
+with:
+  token: ${{ secrets.GITHUB_TOKEN }}
+  id: ${{ github.event.release.id }}
+  name: "Beta"
+  prerelease: true
+  body: "This is a pre-release version for testing purposes."
+  files: "changelog.md,testcoverage.md"
+```
+
+### Workflow Example
+
+This workflow will run when you publish a release. It builds and tests a .Net 5 Nuget library before deploying it to GitHub Packages and adding a test coverage report to the release.
+
+```yaml
+name: Build + Deploy
+
+on:
+  release:
+    types: [published]
+    branches: [master]
+
+env:
+  GITHUB_PACKAGE_URL: 'https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Release Build
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: 5.0.x
+
+    - name: Restore Dependencies
+      run: dotnet restore src/Example.sln
+
+    - name: Build
+      run: dotnet build src/Example.sln --configuration Release --no-restore
+
+    - name: Test
+      run: dotnet test src/Example.sln --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
+
+    - name: Copy Test Details
+      run: cp coverage/**/coverage.cobertura.xml coverage/coverage.cobertura.xml
+
+    - name: Create Test Report
+      uses: irongut/CodeCoverageSummary@v1
+      with:
+        filename: coverage/coverage.cobertura.xml
+        badge: true
+        format: 'markdown'
+        output: 'both'
+
+    - name: Upload Nuget Artifact
+      uses: actions/upload-artifact@v6
+      with:
+        name: release-nuget
+        path: src/Example/bin/Release/Example.Library*.nupkg
+
+    - name: Upload Test Report Artifact
+      uses: actions/upload-artifact@v6
+      with:
+        name: release-nuget
+        path: code-coverage-results.md
+
+  deploy:
+    name: Deploy to GitHub Packages
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download Artifacts
+      uses: actions/download-artifact@v7
+      with:
+        name: release-nuget
+
+    - name: Setup Nuget
+      uses: NuGet/setup-nuget@v2
+      with:
+        nuget-version: latest
+
+    - name: Add GitHub package source
+      run: nuget sources Add -Name GitHub -Source ${{env.GITHUB_PACKAGE_URL}} -UserName ${{ github.repository_owner }} -Password ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Push to GitHub Packages
+      run: nuget push **/*.nupkg -source GitHub -SkipDuplicate
+
+    - name: Add Test Report to Release
+      uses: step-security/EditRelease@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        id: ${{ github.event.release.id }}
+        body: "Released to GitHub Packages."
+        files: "code-coverage-results.md"
+```
+
+## License
+
+Edit Release Action is available under the MIT license, see the [LICENSE](LICENSE) file for more info.
+

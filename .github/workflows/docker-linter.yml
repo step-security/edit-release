@@ -1,0 +1,47 @@
+# hadoint is a Dockerfile linter written in Haskell
+# https://github.com/hadolint/hadolint
+
+name: Docker Linter
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.gitignore'
+      - '**/*.gitattributes'
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hadolint:
+    name: Run hadolint
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read          # for actions/checkout
+
+    steps:
+
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: block
+          allowed-endpoints: >
+            api.github.com:443
+            github.com:443
+
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Lint
+        uses: hadolint/hadolint-action@v3.3.0
+        with:
+          dockerfile: ./Dockerfile
+          format: sarif
+          output-file: hadolint-results.sarif
+          no-fail: true
+

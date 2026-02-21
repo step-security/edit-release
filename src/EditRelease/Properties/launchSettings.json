@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "EditRelease": {
+      "commandName": "Project",
+      "commandLineArgs": "--id 49074289 --name \"Test\" --replacename false --draft false --prerelease true --body \"TEST RELEASE\" --replacebody false --files \"../../../test-releasenotes.md,../../../test-testsummary.md\" --spacing 2"
+    },
+    "Docker (1)": {
+      "commandName": "Docker"
+    }
+  }
+}
