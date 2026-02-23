@@ -67,7 +67,7 @@ internal static class Program
             string owner = repo.Split("/")[0];
             string repoName = repo.Split("/")[1];
 
-            GitHubClient client = new(new ProductHeaderValue("taranis-edit-release-action"))
+            GitHubClient client = new(new ProductHeaderValue("step-security-edit-release-action"))
             {
                 Credentials = new Credentials(options.Token)
             };

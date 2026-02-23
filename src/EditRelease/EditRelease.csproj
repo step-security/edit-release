@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
-    <PackageId>Taranis.EditRelease</PackageId>
+    <PackageId>StepSecurity.EditRelease</PackageId>
     <Version>1.2.0</Version>
     <Authors>step-security</Authors>
     <Company>step-security</Company>
