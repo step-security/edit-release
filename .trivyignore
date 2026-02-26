@@ -1,0 +1,42 @@
+# Build stage (dotnet/sdk:10.0) vulnerabilities - not present in shipped image
+# These CVEs are from the multi-stage build SDK image which is never deployed
+
+# coreutils
+CVE-2016-2781
+
+# curl
+CVE-2025-14017
+CVE-2025-0167
+CVE-2025-10148
+CVE-2025-14524
+CVE-2025-14819
+CVE-2025-15079
+CVE-2025-15224
+
+# git
+CVE-2024-52005
+
+# gnupg
+CVE-2025-68972
+CVE-2022-3219
+
+# libexpat
+CVE-2025-66382
+
+# libgcrypt
+CVE-2024-2236
+
+# icu
+CVE-2025-5222
+
+# linux-pam
+CVE-2025-8941
+
+# shadow-utils
+CVE-2024-56433
+
+# tar
+CVE-2025-45582
+
+# wget
+CVE-2021-31879
