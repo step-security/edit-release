@@ -16,7 +16,7 @@ LABEL com.github.actions.description="A GitHub Action for editing an existing re
 LABEL com.github.actions.icon="edit"
 LABEL com.github.actions.color="purple"
 
-FROM mcr.microsoft.com/dotnet/runtime:8.0@sha256:d304745fcb833f4dd78a0be39812f594722c598303cf0ed3feefd1cbb5d8cc48 AS final
+FROM mcr.microsoft.com/dotnet/runtime:10.0@sha256:20c8b96cccff81d140c32ada512417f1c42248b64f54a80a319311b813a9dfb4 AS final
 WORKDIR /app
 COPY --from=build /publish .
 ENV DOTNET_EnableDiagnostics=0
