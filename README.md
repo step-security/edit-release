@@ -6,7 +6,7 @@
 &nbsp;
 ![Built With Docker](https://img.shields.io/badge/Built_With-Docker-informational?style=flat&logo=docker)
 &nbsp;
-[![CI Build](https://github.com/step-security/EditRelease/actions/workflows/ci-build.yml/badge.svg)](https://github.com/step-security/EditRelease/actions/workflows/ci-build.yml)
+[![CI Build](https://github.com/step-security/edit-release/actions/workflows/ci-build.yml/badge.svg)](https://github.com/step-security/edit-release/actions/workflows/ci-build.yml)
 &nbsp;
 
 
@@ -70,7 +70,7 @@ Edit Release has no outputs other than console messages and the edited release.
 
 ```yaml
 name: Edit Release
-uses: step-security/EditRelease@v1
+uses: step-security/edit-release@v1
 with:
   token: ${{ secrets.GITHUB_TOKEN }}
   id: ${{ github.event.release.id }}
@@ -164,7 +164,7 @@ jobs:
       run: nuget push **/*.nupkg -source GitHub -SkipDuplicate
 
     - name: Add Test Report to Release
-      uses: step-security/EditRelease@v1
+      uses: step-security/edit-release@v1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         id: ${{ github.event.release.id }}

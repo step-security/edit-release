@@ -10,8 +10,8 @@
     <Description>A GitHub Action for editing an existing release.</Description>
     <Copyright>Copyright © 2021 - 2022 Taranis Software</Copyright>
     <Copyright>Copyright (c) 2026 StepSecurity</Copyright>
-    <PackageProjectUrl>https://github.com/step-security/EditRelease</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/step-security/EditRelease</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/step-security/edit-release</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/step-security/edit-release</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <Product>Edit Release Action</Product>
