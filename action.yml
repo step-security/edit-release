@@ -45,7 +45,7 @@ inputs:
     default: '1'
 runs:
   using: 'docker'
-  image: 'Dockerfile'
+  image: 'docker://ghcr.io/step-security/edit-release:v1.2.0@sha256:64fe19c5c9dfcb61a19a26f20a1936467e4345fc36e77046664c9d1d477ae226' #v1.2.0
   args:
     - '--token'
     - ${{ inputs.token }}
@@ -67,3 +67,4 @@ runs:
     - ${{ inputs.files }}
     - '--spacing'
     - ${{ inputs.spacing }}
+
