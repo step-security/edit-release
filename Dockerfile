@@ -7,8 +7,8 @@ RUN dotnet publish EditRelease/EditRelease.csproj -c Release --no-restore -o /pu
 
 # Label the container
 LABEL maintainer="step-security"
-LABEL repository="https://github.com/step-security/EditRelease"
-LABEL homepage="https://github.com/step-security/EditRelease"
+LABEL repository="https://github.com/step-security/edit-release"
+LABEL homepage="https://github.com/step-security/edit-release"
 
 # Label as GitHub Action
 LABEL com.github.actions.name="Edit Release"
