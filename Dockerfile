@@ -16,7 +16,7 @@ LABEL com.github.actions.description="A GitHub Action for editing an existing re
 LABEL com.github.actions.icon="edit"
 LABEL com.github.actions.color="purple"
 
-FROM mcr.microsoft.com/dotnet/runtime:10.0-noble-chiseled AS final
+FROM mcr.microsoft.com/dotnet/runtime:10.0-noble-chiseled@sha256:4064d8b92a610279f1d6de907c6de9bc4e4a07e4e1f94fdff77cd77a406d9725 AS final
 WORKDIR /app
 COPY --from=build /publish .
 ENV DOTNET_EnableDiagnostics=0
