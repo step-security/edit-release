@@ -1,12 +1,14 @@
 ﻿using CommandLine;
 using Octokit;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace EditRelease;
@@ -33,20 +35,62 @@ internal static class Program
         }
 
         // Validate subscription
-        try
+        bool? repoPrivate = null;
+        string eventPath = Environment.GetEnvironmentVariable("GITHUB_EVENT_PATH");
+        if (!string.IsNullOrEmpty(eventPath) && File.Exists(eventPath))
         {
-            using var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(3) };
-            var apiUrl = $"https://agent.api.stepsecurity.io/v1/github/{repo}/actions/subscription";
-            var response = await httpClient.GetAsync(apiUrl).ConfigureAwait(false);
-            if (response.StatusCode == HttpStatusCode.Forbidden)
+            try
             {
-                Console.WriteLine("Subscription is not valid. Reach out to support@stepsecurity.io");
-                return -2;
+                using var eventDoc = JsonDocument.Parse(File.ReadAllText(eventPath));
+                if (eventDoc.RootElement.TryGetProperty("repository", out var repoElement)
+                    && repoElement.ValueKind == JsonValueKind.Object
+                    && repoElement.TryGetProperty("private", out var privateElement)
+                    && (privateElement.ValueKind == JsonValueKind.True || privateElement.ValueKind == JsonValueKind.False))
+                {
+                    repoPrivate = privateElement.GetBoolean();
+                }
+            }
+            catch
+            {
+                // ignore malformed event payloads
             }
         }
-        catch
+
+        const string upstream = "irongut/EditRelease";
+        string actionRepo = Environment.GetEnvironmentVariable("GITHUB_ACTION_REPOSITORY") ?? string.Empty;
+        const string docsUrl = "https://docs.stepsecurity.io/actions/stepsecurity-maintained-actions";
+
+        Console.WriteLine(string.Empty);
+        Console.WriteLine("\u001b[1;36mStepSecurity Maintained Action\u001b[0m");
+        Console.WriteLine($"Secure drop-in replacement for {upstream}");
+        if (repoPrivate == false)
+            Console.WriteLine("\u001b[32m✓ Free for public repositories\u001b[0m");
+        Console.WriteLine($"\u001b[36mLearn more:\u001b[0m {docsUrl}");
+        Console.WriteLine(string.Empty);
+
+        if (repoPrivate != false)
         {
-            Console.WriteLine("Timeout or API not reachable. Continuing to next step.");
+            string serverUrl = Environment.GetEnvironmentVariable("GITHUB_SERVER_URL") ?? "https://github.com";
+            var body = new Dictionary<string, string> { { "action", actionRepo } };
+            if (serverUrl != "https://github.com") body["ghes_server"] = serverUrl;
+
+            try
+            {
+                using var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(3) };
+                var apiUrl = $"https://agent.api.stepsecurity.io/v1/github/{repo}/actions/maintained-actions-subscription";
+                var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+                var response = await httpClient.PostAsync(apiUrl, content).ConfigureAwait(false);
+                if (response.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    Console.WriteLine("\u001b[1;31mThis action requires a StepSecurity subscription for private repositories.\u001b[0m");
+                    Console.WriteLine($"\u001b[31mLearn how to enable a subscription: {docsUrl}\u001b[0m");
+                    return -2;
+                }
+            }
+            catch
+            {
+                Console.WriteLine("Timeout or API not reachable. Continuing to next step.");
+            }
         }
 
 #if DEBUG
