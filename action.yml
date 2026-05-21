@@ -45,7 +45,7 @@ inputs:
     default: '1'
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/step-security/edit-release:v1.2.1@sha256:491360970cb6924dd9e47876f2b8b7494cc9bd9ee2259ae484423a51c349ab66' #v1.2.1
+  image: 'docker://ghcr.io/step-security/edit-release:v1.2.1@sha256:38d2f27207988bf01d1d1ba1b8e382bef9c03b8f33334c6ed17864f7367ef8eb' #v1.2.1
   args:
     - '--token'
     - ${{ inputs.token }}
