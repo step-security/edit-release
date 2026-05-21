@@ -82,8 +82,8 @@ internal static class Program
                 var response = await httpClient.PostAsync(apiUrl, content).ConfigureAwait(false);
                 if (response.StatusCode == HttpStatusCode.Forbidden)
                 {
-                    Console.WriteLine("\u001b[1;31mThis action requires a StepSecurity subscription for private repositories.\u001b[0m");
-                    Console.WriteLine($"\u001b[31mLearn how to enable a subscription: {docsUrl}\u001b[0m");
+                    Console.WriteLine("\u001b[1;31mError: This action requires a StepSecurity subscription for private repositories.\u001b[0m");
+                    Console.WriteLine($"\u001b[31mError: Learn how to enable a subscription: {docsUrl}\u001b[0m");
                     return -2;
                 }
             }
