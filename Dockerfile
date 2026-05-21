@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:10.0@sha256:e362a8dbcd691522456da26a5198b8f3ca1d7641c95624fadc5e3e82678bd08a AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0@sha256:c0790639332692a0d56cdd81ed581cfd24d040d9839764c138994866df89a3b6 AS build
 WORKDIR /src
 COPY ["src/EditRelease/EditRelease.csproj", "EditRelease/"]
 RUN dotnet restore EditRelease/EditRelease.csproj
@@ -16,7 +16,7 @@ LABEL com.github.actions.description="A GitHub Action for editing an existing re
 LABEL com.github.actions.icon="edit"
 LABEL com.github.actions.color="purple"
 
-FROM mcr.microsoft.com/dotnet/runtime:10.0-noble-chiseled@sha256:4064d8b92a610279f1d6de907c6de9bc4e4a07e4e1f94fdff77cd77a406d9725 AS final
+FROM mcr.microsoft.com/dotnet/runtime:10.0-noble-chiseled@sha256:43d31267de3f39d00661db8054f882041933c4ef894c0a0a1c54f9704dc0eadc AS final
 WORKDIR /app
 COPY --from=build /publish .
 ENV DOTNET_EnableDiagnostics=0
